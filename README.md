@@ -1,32 +1,49 @@
-# React + TypeScript + Vite
+# GutterGoblins
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+GutterGoblins is a lightweight React + TypeScript bowling score tracker built with Vite. It lets users log games, track frame-by-frame scoring, and store a short history of recent games in browser local storage.
 
-Currently, two official plugins are available:
+In the future GutterGoblins will have additional features such as arsenal building and personal coaching feature using AI to help users better their bowling form and approach.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Enter player name and record pin counts for each roll
+- Handles strike and spare scoring rules across 10 frames
+- Shows current game score in real time
+- Tracks recent games, average score, best score, and games logged
+- Persists recent games using browser local storage
+- Built with React, TypeScript, Vite, and Oxlint
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Open the URL printed by Vite in your browser.
+
+## Available Scripts
+
+- `npm run dev` — start the development server
+- `npm run build` — compile the app for production
+- `npm run preview` — preview the production build locally
+- `npm run lint` — run Oxlint against the project
+
+## How to Use
+
+1. Enter your name in the player name field.
+2. Click `New game` to start recording a bowling session.
+3. Select the number of pins knocked down for each roll.
+4. The app updates the score and frame display automatically.
+5. When the game ends, your score is saved to the recent games history.
+
+## Project Structure
+
+- `src/App.tsx` — main app UI and game flow logic
+- `src/components/scoring.ts` — score calculation utilities
+- `src/components/frames.ts` — frame construction from roll inputs
+- `src/main.tsx` — React app entry point
+
+## Notes
+
+This is a Phase 1 MVP focused on simple score logging and gameplay tracking. It currently stores up to 10 recent games in local storage.
