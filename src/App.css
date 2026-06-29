@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 1.25rem;
   padding: 2rem;
+  min-width: 709px;
 }
 
 .hero-card,
@@ -133,22 +134,70 @@ button {
 .scorecard {
   width: 100%;
   border-collapse: collapse;
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  border: 2px solid rgba(255, 255, 255, 1);
+  margin-bottom: 1rem;
+  /* table-layout: fixed; */
 }
 
 .scorecard th,
-.frame-cell,
-.player-cell,
+.frame-cell {
+  border: 1px solid rgba(255, 255, 255, 1);
+  width: 45px;
+  height: 84px;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0;
+}
+
+.player-cell {
+  border: 1px solid rgba(255, 255, 255, 1);
+  width: 120px;
+  font-weight: 700;
+  text-align: center;
+}
+
 .totals-cell {
-  border: 2px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 1);
+  width: 90px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.scorecard th {
+  height: 44px;
+  font-size: 0.95rem;
 }
 
 .rolls-row {
-  border-bottom: 2px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  height: 42px;
+  border-bottom: 2px solid rgba(255, 255, 255, 1);
+}
+
+.roll-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 7px;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .roll-box + .roll-box {
-  border-left: 2px solid rgba(255, 255, 255, 0.35);
+  border-left: 1px solid rgba(255, 255, 255, 1);
+}
+
+.score-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .history-list {

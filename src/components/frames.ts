@@ -1,18 +1,4 @@
-const TOTAL_FRAMES = 10
-const TOTAL_PINS = 10
-
-export type FrameEntry = {
-  frameNumber: number
-  rolls: number[]
-}
-
-function isStrike(roll: number): boolean {
-  return roll === TOTAL_PINS
-}
-
-function isSpare(firstRoll: number, secondRoll: number): boolean {
-  return firstRoll + secondRoll === TOTAL_PINS
-}
+import { TOTAL_FRAMES, type FrameEntry, isStrike, isSpare } from './bowling'
 
 export function buildFrameEntries(rolls: number[]): FrameEntry[] {
   const frames: FrameEntry[] = []

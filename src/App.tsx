@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import './App.css'
-import { calculateScore } from './components/scoring'
+import { calculateFrameScores, calculateScore } from './components/scoring'
 import { buildFrameEntries } from './components/frames'
 
 type GameRecord = {
@@ -39,6 +39,7 @@ function App() {
 
   // ✅ frameEntries declared first so currentScore can depend on it
   const frameEntries = useMemo(() => buildFrameEntries(rolls), [rolls])
+  const frameScores = useMemo(() => calculateFrameScores(frameEntries), [frameEntries])
   const currentScore = useMemo(() => calculateScore(frameEntries), [frameEntries])
 
   const averageScore = useMemo(() => {
@@ -200,66 +201,55 @@ function App() {
         </div>
       </section>
 
-      <section className="panel frame-panel">
-        <div className="panel-heading">
-          <h2>Score</h2>
-        </div>
-        <div className="scorecard-wrapper">
-          <table className="scorecard">
-            <thead>
-              <tr>
-                <th className="player-col">Player</th>
-                {frameEntries.slice(0, 9).map((frame) => (
-                  <th key={frame.frameNumber} colSpan={2}>
-                    {frame.frameNumber}
-                  </th>
-                ))}
-                <th colSpan={3}>10</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="player-cell">{playerName}</td>
-                {frameEntries.map((frame, fi) => {
-                  const isTenth = fi === 9
-                  const rollCount = isTenth ? 3 : 2
-                  const displayRolls: Array<number | null> = [...frame.rolls]
-                  while (displayRolls.length < rollCount) displayRolls.push(null)
-
-                  return (
-                    <td key={frame.frameNumber} className={`frame-cell${isTenth ? ' tenth' : ''}`} colSpan={rollCount}>
-                      <div className="rolls-row">
-                        {displayRolls.map((roll, i) => (
-                          <span
-                            key={i}
-                            className={`roll-box${roll === 10 ? ' strike' : roll === null ? '' : ''}`}
-                          >
-                            {roll ?? ''}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="score-box">{currentScore}</div>
-                    </td>
-                  )
-                })}
-                <td className="totals-cell">{''}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
       <section className="dashboard-grid">
         <div className="panel score-panel">
           <div className="panel-heading">
             <h2>Current game</h2>
             <span className="status-pill">{status}</span>
           </div>
-          <div className="score-display">{gameFinished ? currentScore : currentScore || 0}</div>
-          <p className="panel-copy">
-            Frame {frameState.number} • Roll {frameState.rolls.length + 1}
-          </p>
+          <div className="scorecard-wrapper">
+            <table className="scorecard">
+              <thead>
+                <tr>
+                  <th className="player-col">Player</th>
+                  {frameEntries.slice(0, 9).map((frame) => (
+                    <th key={frame.frameNumber} colSpan={2}>
+                      {frame.frameNumber}
+                    </th>
+                  ))}
+                  <th colSpan={3}>10</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="player-cell">{playerName}</td>
+                  {frameEntries.map((frame, fi) => {
+                    const isTenth = fi === 9
+                    const rollCount = isTenth ? 3 : 2
+                    const displayRolls: Array<number | null> = [...frame.rolls]
+                    while (displayRolls.length < rollCount) displayRolls.push(null)
+                      return (
+                        <td key={frame.frameNumber} className={`frame-cell${isTenth ? ' tenth' : ''}`} colSpan={rollCount}>
+                          <div className="rolls-row">
+                            {displayRolls.map((roll, i) => (
+                              <span
+                                key={i}
+                                className={`roll-box${roll === 10 ? ' strike' : roll === null ? '' : ''}`}
+                              >
+                                {roll ?? ''}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="score-box">{frameScores[fi] ?? ''}</div>
+                        </td>
+                      )
+                  })}
+                  <td className="totals-cell">{currentScore}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div className="pins-grid">
             {PIN_OPTIONS.map((value) => (
               <button key={value} type="button" className="pin-button" onClick={() => handlePinSelection(value)}>
