@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildFrameEntries, calculateScore } from './scoring'
+import { buildFrameEntries, calculateFrameScores, calculateScore } from './scoring'
 
 describe('calculateScore', () => {
   it('returns 300 for a perfect game', () => {
@@ -20,6 +20,16 @@ describe('calculateScore', () => {
   it('handles a strike with the next two balls as bonus', () => {
     const frames = buildFrameEntries([10, 3, 4, ...Array(17).fill(0)])
     expect(calculateScore(frames)).toBe(24)
+  })
+})
+
+describe('calculateFrameScores', () => {
+  it('shows a spare frame score once the next roll is available', () => {
+    const frames = buildFrameEntries([5, 5, 3, 0])
+    const frameScores = calculateFrameScores(frames)
+
+    expect(frameScores[0]).toBe(13)
+    expect(frameScores[1]).toBe(16)
   })
 })
 
