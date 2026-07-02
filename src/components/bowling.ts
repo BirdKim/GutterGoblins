@@ -1,7 +1,5 @@
-
-
-export const TOTAL_FRAMES = 10
-export const TOTAL_PINS = 10
+export const TOTAL_FRAMES: number = 10
+export const TOTAL_PINS: number = 10
 
 export type FrameEntry = {
   frameNumber: number

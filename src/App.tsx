@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import './App.css'
-import { calculateFrameScores, calculateScore } from './components/scoring'
+import { calculateCumulativeScore, getGameTotal } from './components/scoring'
 import { buildFrameEntries } from './components/frames'
 
 type GameRecord = {
@@ -16,8 +16,8 @@ type FrameState = {
   rolls: number[]
 }
 
-const STORAGE_KEY = 'guttergoblins-games'
-const PIN_OPTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const STORAGE_KEY: string = 'guttergoblins-games'
+const PIN_OPTIONS: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 function readStoredGames(): GameRecord[] {
   if (typeof window === 'undefined') return []
@@ -39,8 +39,8 @@ function App() {
 
   // ✅ frameEntries declared first so currentScore can depend on it
   const frameEntries = useMemo(() => buildFrameEntries(rolls), [rolls])
-  const frameScores = useMemo(() => calculateFrameScores(frameEntries), [frameEntries])
-  const currentScore = useMemo(() => calculateScore(frameEntries), [frameEntries])
+  const frameScores = useMemo(() => calculateCumulativeScore(frameEntries), [frameEntries])
+  const currentScore = useMemo(() => getGameTotal(frameEntries), [frameEntries])
 
   const averageScore = useMemo(() => {
     if (!games.length) return 0
@@ -153,7 +153,7 @@ function App() {
           return
         }
 
-        const finalScore = calculateScore(buildFrameEntries(nextRolls))
+        const finalScore = getGameTotal(buildFrameEntries(nextRolls))
         setFrameState({ number: 10, rolls: nextFrameRolls })
         setGameFinished(true)
         saveGame(nextRolls, finalScore)
@@ -166,7 +166,7 @@ function App() {
           return
         }
 
-        const finalScore = calculateScore(buildFrameEntries(nextRolls))
+        const finalScore = getGameTotal(buildFrameEntries(nextRolls))
         setRolls(nextRolls)
         setFrameState({ number: 10, rolls: nextFrameRolls })
         setGameFinished(true)
@@ -179,7 +179,7 @@ function App() {
     <main className="app-shell">
       <section className="hero-card">
         <div>
-          <p className="eyebrow">Phase 1 MVP</p>
+          <p className="eyebrow">Home Page</p>
           <h1>GutterGoblins</h1>
           <p className="hero-copy">
             Log games, track your score, and build a simple history of your bowling progress.
@@ -224,27 +224,27 @@ function App() {
               <tbody>
                 <tr>
                   <td className="player-cell">{playerName}</td>
-                  {frameEntries.map((frame, fi) => {
-                    const isTenth = fi === 9
-                    const rollCount = isTenth ? 3 : 2
-                    const displayRolls: Array<number | null> = [...frame.rolls]
-                    while (displayRolls.length < rollCount) displayRolls.push(null)
-                      return (
-                        <td key={frame.frameNumber} className={`frame-cell${isTenth ? ' tenth' : ''}`} colSpan={rollCount}>
-                          <div className="rolls-row">
-                            {displayRolls.map((roll, i) => (
-                              <span
-                                key={i}
-                                className={`roll-box${roll === 10 ? ' strike' : roll === null ? '' : ''}`}
-                              >
-                                {roll ?? ''}
-                              </span>
-                            ))}
-                          </div>
-                          <div className="score-box">{frameScores[fi] ?? ''}</div>
-                        </td>
-                      )
-                  })}
+                    {frameEntries.map((frame, fi) => {
+                      const isTenth = fi === 9
+                      const rollCount = isTenth ? 3 : 2
+                      const displayRolls: Array<number | null> = [...frame.rolls]
+                      while (displayRolls.length < rollCount) displayRolls.push(null)
+                        return (
+                          <td key={frame.frameNumber} className={`frame-cell${isTenth ? ' tenth' : ''}`} colSpan={rollCount}>
+                            <div className="rolls-row">
+                              {displayRolls.map((roll, i) => (
+                                <span
+                                  key={i}
+                                  className={`roll-box${roll === 10 ? ' strike' : roll === null ? '' : ''}`}
+                                >
+                                  {roll ?? ''}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="score-box">{frameScores[fi] ?? ''}</div>
+                          </td>
+                        )
+                    })}
                   <td className="totals-cell">{currentScore}</td>
                 </tr>
               </tbody>
