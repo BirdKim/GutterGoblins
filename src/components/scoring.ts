@@ -4,52 +4,7 @@ function getRollsForFrame(frames: FrameEntry[], frameIndex: number): number[] {
   return frames[frameIndex]?.rolls ?? []
 }
 
-export function calculateScore(frames: FrameEntry[]): number {
-  let gameScore = 0
-
-  for (let frameIndex = 0; frameIndex < TOTAL_FRAMES; frameIndex += 1) {
-    const rolls = getRollsForFrame(frames, frameIndex)
-    if (rolls.length === 0) {
-      break
-    }
-
-    if (frameIndex === TOTAL_FRAMES - 1) {
-      gameScore += rolls.reduce((sum, roll) => sum + roll, 0)
-      break
-    }
-
-    if (isStrike(rolls[0])) {
-      const bonusRolls = [
-        ...getRollsForFrame(frames, frameIndex + 1),
-        ...getRollsForFrame(frames, frameIndex + 2),
-      ]
-      if (bonusRolls[0] === undefined || bonusRolls[1] === undefined) {
-        break
-      }
-      gameScore += TOTAL_PINS + bonusRolls[0] + bonusRolls[1]
-      continue
-    }
-
-    if (rolls[1] === undefined) {
-      break
-    }
-
-    if (isSpare(rolls[0], rolls[1])) {
-      const nextRoll = getRollsForFrame(frames, frameIndex + 1)[0]
-      if (nextRoll === undefined) {
-        break
-      }
-      gameScore += TOTAL_PINS + nextRoll
-      continue
-    }
-
-    gameScore += rolls[0] + rolls[1]
-  }
-
-  return gameScore
-}
-
-function calculateFrameTotal(frames: FrameEntry[], frameIndex: number): number | undefined {
+export function calculateFrame(frames: FrameEntry[], frameIndex: number): number | undefined {
   const frameRolls = getRollsForFrame(frames, frameIndex)
   if (frameRolls.length === 0) {
     return undefined
@@ -57,6 +12,7 @@ function calculateFrameTotal(frames: FrameEntry[], frameIndex: number): number |
 
   const isLastFrame = frameIndex === TOTAL_FRAMES - 1
 
+  // Handle the last frame separately.
   if (isLastFrame) {
     // Wait until the frame is complete.
     const first = frameRolls[0]
@@ -82,12 +38,12 @@ function calculateFrameTotal(frames: FrameEntry[], frameIndex: number): number |
     return frameRolls.reduce((sum, roll) => sum + roll, 0)
   }
 
+  // Handle frames 1-9 on whether the first ball was a strike.
   if (isStrike(frameRolls[0])) {
     const bonusRolls = [
       ...getRollsForFrame(frames, frameIndex + 1),
       ...getRollsForFrame(frames, frameIndex + 2),
     ]
-
     if (bonusRolls[0] === undefined || bonusRolls[1] === undefined) {
       return undefined
     }
@@ -111,12 +67,12 @@ function calculateFrameTotal(frames: FrameEntry[], frameIndex: number): number |
   return frameRolls[0] + frameRolls[1]
 }
 
-export function calculateFrameScores(frames: FrameEntry[]): Array<number | undefined> {
+export function calculateCumulativeScore(frames: FrameEntry[]): Array<number | undefined> {
   const scores: Array<number | undefined> = Array(TOTAL_FRAMES).fill(undefined)
   let runningTotal = 0
 
   for (let frameIndex = 0; frameIndex < TOTAL_FRAMES; frameIndex ++) {
-    const frameScore = calculateFrameTotal(frames, frameIndex)
+    const frameScore = calculateFrame(frames, frameIndex)
     if (frameScore === undefined) {
       continue
     }
@@ -128,4 +84,12 @@ export function calculateFrameScores(frames: FrameEntry[]): Array<number | undef
   return scores
 }
 
-export { buildFrameEntries } from './frames'
+export function getGameTotal(frames: FrameEntry[]): number {
+  const scores = calculateCumulativeScore(frames)
+  for (let i = scores.length - 1; i >= 0; i--) {
+    if (scores[i] !== undefined) return scores[i]!
+  }
+  return 0
+}
+
+// export { buildFrameEntries } from './frames'
